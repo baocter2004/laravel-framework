@@ -15,8 +15,14 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
+Route::middleware(['ensureToken'])->group(function () {
+    Route::get('/', function () {
+        return view('welcome');
+    })->withoutMiddleware(['ensureToken']);
+
+    Route::get('/profile',function () {
+        echo "đã có params xxx";
+    });
 });
 
 Route::resource('users',UserController::class);
