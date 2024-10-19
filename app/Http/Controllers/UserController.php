@@ -13,7 +13,9 @@ class UserController extends Controller
      */
     public function index()
     {
-        echo "đây là trang chủ nè";
+        $data = User::latest('id')->paginate(10);
+
+        return view('users.index',['data'=>$data]);
     }
 
     /**
@@ -21,7 +23,7 @@ class UserController extends Controller
      */
     public function create()
     {
-        //
+        return view('users.create');
     }
 
     /**
