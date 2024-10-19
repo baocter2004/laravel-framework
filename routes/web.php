@@ -17,12 +17,19 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware(['ensureToken'])->group(function () {
     Route::get('/', function () {
-        return view('welcome');
-    })->withoutMiddleware(['ensureToken']);
+        return view('master');
+    })->name('master')->withoutMiddleware(['ensureToken']);
 
     Route::get('/profile',function () {
         echo "đã có params xxx";
     });
 });
 
-Route::resource('users',UserController::class);
+
+Route::resource('users', UserController::class);
+
+// Route cho trang thùng rác
+Route::get('user-trash', [UserController::class, 'trash'])->name('users.trash');
+
+// Route cho việc xóa cứng
+Route::delete('user-trash/{user}/force-destroy', [UserController::class, 'forceDestroy'])->name('users.forceDestroy');

@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreUserRequest extends FormRequest
 {
@@ -11,7 +12,7 @@ class StoreUserRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +23,18 @@ class StoreUserRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'name' => 'required|max:255',
+            'image' => 'nullable|image',
+            'email' => [
+                'required',
+                Rule::unique('users'),
+            ],
+            'password' => 'required',
+            'role' => 'required',
+            'is_active' => [
+                'nullable',
+                Rule::in([0,1])
+            ]
         ];
     }
 }
