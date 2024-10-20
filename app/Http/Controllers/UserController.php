@@ -114,30 +114,47 @@ class UserController extends Controller
         }
     }
 
-    // xóa cứng
-
-    public function forceDestroy(User $user) {
-        try {
-            $user->forceDelete();
-
-            if (Storage::exists($user->image)) {
-                Storage::delete($user->image);
-            }
-
-            return redirect()
-                ->route('users.trash')
-                ->with('success', true);
-        } catch (\Throwable $th) {
-            return back()
-                ->with('success', false);
-        }
-    }
-
     // show Users đã vào thùng rác
 
-    public function trash () {
+    public function trash()
+    {
         $users = User::onlyTrashed()->latest('id')->paginate(5);
 
         return view('users.trash', ['users' => $users]);
     }
+
+    // xóa cứng
+
+    public function forceDestroy($id)
+    {
+        try {
+            $user = User::withTrashed()->findOrFail($id);
+
+            $user->forceDelete();
+
+            if ($user->image && Storage::exists($user->image)) {
+                Storage::delete($user->image);
+            }
+
+            return redirect()->route('users.trash')->with('success', 'User permanently deleted.');
+        } catch (\Throwable $th) {
+            return back()->with('error', 'User not found or could not be deleted.');
+        }
+    }
+
+    // restore lại user đã xóa mềm
+
+    public function restoreUserDestroy($id)
+    {
+        try {
+            $user = User::withTrashed()->findOrFail($id);
+
+            $user->restore();
+
+            return redirect()->route('users.index')->with('success', 'User permanently deleted.');
+        } catch (\Throwable $th) {
+            return back()->with('error', 'User not found or could not be deleted.');
+        }
+    }
+
 }

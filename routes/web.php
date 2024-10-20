@@ -20,16 +20,27 @@ Route::middleware(['ensureToken'])->group(function () {
         return view('master');
     })->name('master')->withoutMiddleware(['ensureToken']);
 
-    Route::get('/profile',function () {
+    Route::get('/profile', function () {
         echo "đã có params xxx";
     });
 });
 
+Route::prefix('users')
+    ->name('users.')
+    ->group(function () {
+        // Route tĩnh trước
+        Route::get('user-trash', [UserController::class, 'trash'])->name('trash');
+        Route::get('create', [UserController::class, 'create'])->name('create');
+        Route::post('/', [UserController::class, 'store'])->name('store');
 
-Route::resource('users', UserController::class);
+        // Route động sau
+        Route::get('{user}', [UserController::class, 'show'])->name('show');
+        Route::get('{user}/edit', [UserController::class, 'edit'])->name('edit');
+        Route::put('{user}', [UserController::class, 'update'])->name('update');
+        Route::delete('{user}', [UserController::class, 'destroy'])->name('destroy');
+        Route::delete('{user}/force-destroy', [UserController::class, 'forceDestroy'])->name('force-destroy');
+        Route::post('{user}/restore', [UserController::class, 'restoreUserDestroy'])->name('restore');
 
-// Route cho trang thùng rác
-Route::get('user-trash', [UserController::class, 'trash'])->name('users.trash');
-
-// Route cho việc xóa cứng
-Route::delete('user-trash/{user}/force-destroy', [UserController::class, 'forceDestroy'])->name('users.forceDestroy');
+        // Hiển thị danh sách người dùng
+        Route::get('/', [UserController::class, 'index'])->name('index');
+    });

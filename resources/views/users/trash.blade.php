@@ -55,7 +55,12 @@
                         <td>{{ $user->created_at }}</td>
                         <td>{{ $user->updated_at }}</td>
                         <td>
-                            <form action="{{ route('users.forceDestroy', $user->id) }}" method="POST">
+                            <form action="{{ route('users.restore', $user->id) }}" method="POST">
+                                @csrf
+                                <button onclick="return confirm('do you want restore this user ?')" class="btn btn-info">Restore Người
+                                    Dùng</button>
+                            </form>
+                            <form action="{{ route('users.force-destroy', $user->id) }}" method="POST">
                                 @csrf
                                 @method('DELETE')
                                 <button onclick="return confirm('bạn có muốn xóa ?')" class="btn btn-danger">Xóa Người
